@@ -9,6 +9,20 @@ provider:
 package:
   individually: true
 
+resources:
+  Resources:
+    CustomersTable:
+       Type: AWS::DynamoDB::Table
+       Properties:
+        TableName: CustomersTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
 build:
   esbuild:
     minify: true
@@ -17,9 +31,9 @@ build:
       - '@aws-sdk/*'
 
 functions:
-  hello:
-    handler: src/functions/hello.handler
+  populateDB:
+    handler: src/functions/populateDB.handler
     events:
       - httpApi:
-          path: /
-          method: get
+          path: /populate
+          method: post
