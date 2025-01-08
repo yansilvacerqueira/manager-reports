@@ -31,6 +31,24 @@ resources:
           - AttributeName: id
             KeyType: HASH
 
+    ReportQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ReportQueue
+        # Long polling, used to reduce the numbers of avoid requests
+        ReceiveMessageWaitTimeSeconds: 20
+        # This property going avoid that consumers got the same message, 180s can be too much (think about)
+        VisibilityTimeout: 180
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt ReportDLQ.Arn
+          maxReceiveCount: 2
+
+    ReportDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ReportDLQ
+        MessageRetentionPeriod: 1209600 # that means 14 days, the maximun available to aws
+
 build:
   esbuild:
     minify: true
