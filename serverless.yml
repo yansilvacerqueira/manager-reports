@@ -41,6 +41,7 @@ build:
 functions:
   populateDB:
     handler: src/functions/populateDB.handler
+    timeout: 23
     events:
       - httpApi:
           path: /populate
