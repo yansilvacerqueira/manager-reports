@@ -5,6 +5,14 @@ service: manager-reports
 provider:
   name: aws
   runtime: nodejs20.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:Scan
+          Resource: !GetAtt CustomersTable.Arn
 
 package:
   individually: true
