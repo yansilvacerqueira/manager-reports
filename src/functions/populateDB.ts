@@ -7,21 +7,26 @@ import { dynamoClient } from "../clients/dynamo";
 export const handler = async () => {
   const total = 5000;
 
-  await Promise.allSettled(
-  Array.from({ length: total }, async () => {
-    const command =  new PutItemCommand({
-      TableName: 'CostumersTable',
-      Item: {
-        id: {S: randomUUID()},
-        name: {S: faker.person.fullName()},
-        email: {S: faker.internet.email().toLocaleLowerCase()},
-        job: {S: faker.person.jobTitle()},
-      }
-    })
+  try {
+    await Promise.allSettled(
+      Array.from({ length: total }, async () => {
+        const command =  new PutItemCommand({
+          TableName: 'CustomersTable',
+          Item: {
+            id: {S: randomUUID()},
+            name: {S: faker.person.fullName()},
+            email: {S: faker.internet.email().toLocaleLowerCase()},
+            job: {S: faker.person.jobTitle()},
+          }
+        })
 
-    await dynamoClient.send(command);
-  }))
+        const response = await dynamoClient.send(command);
 
+        console.log(response.Attributes, '\n')
+      }))
+  } catch (error) {
+    console.log(error)
+  }
 
   return response(200, {
     message: "customers sended",
